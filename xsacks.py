@@ -6,35 +6,24 @@ def cipher(message, key, skey):
     skey = str(skey)
     # Needed lists
     messageCIPHER = []
-    messageCIPHERAscii = []
     keyCIPHER = []
-    keyCIPHERAscii = []
-    messageASCII = []
-    keyASCII = []
-    keyASCII1 = []
     keyASCII2 = []
     skeyASCII = []
 
     # Divide string in two parts (avoiding generating more than two parts)
     keyPARTS = []
-    n = int(len(key) / 2)
-    partnumber = 0
-    for i in range(0, len(key), n):
-        partnumber += 1
-        if not partnumber > 2:
+    n = len(key) // 2
+    for partnumber, i in enumerate(range(0, len(key), n), start=1):
+        if partnumber <= 2:
             keyPARTS.append(key[i: i + n])
         else:
             keyPARTS[1] = keyPARTS[1] + key[i: i + n]
 
-    # Convert everything in ascii
-    for char in message:
-        messageASCII.append(ord(char))
-    for char in keyPARTS[0]:
-        keyASCII1.append(ord(char))
+    messageASCII = [ord(char) for char in message]
+    keyASCII1 = [ord(char) for char in keyPARTS[0]]
     for char in keyPARTS[1]:
         keyASCII2.append(ord(char))
-    for char in key:
-        keyASCII.append(ord(char))
+    keyASCII = [ord(char) for char in key]
     for char in skey:
         skeyASCII.append(ord(char))
 
@@ -48,28 +37,19 @@ def cipher(message, key, skey):
             if counterEven > len(keyASCII1) - 1:
                 counterEven = 0
             cipherResult = int(messageASCII[i]) + int(keyASCII1[counterEven])
-            while (cipherResult > 125) or (cipherResult < 32):
-                if cipherResult > 125:
-                    cipherResult = 31 + (cipherResult - 125)
-                if cipherResult < 32:
-                    cipherResult = 126 - (32 - cipherResult)
-            messageCIPHER.append(cipherResult)
         else:
             # Use the second part of the key
             counterOdd += 1
             if counterOdd > len(keyASCII2) - 1:
                 counterOdd = 0
             cipherResult = int(messageASCII[i]) + int(keyASCII2[counterOdd])
-            while (cipherResult > 125) or (cipherResult < 32):
-                if cipherResult > 125:
-                    cipherResult = 31 + (cipherResult - 125)
-                if cipherResult < 32:
-                    cipherResult = 126 - (32 - cipherResult)
-            messageCIPHER.append(cipherResult)
-
-    for char in messageCIPHER:
-        messageCIPHERAscii.append(chr(char))
-
+        while (cipherResult > 125) or (cipherResult < 32):
+            if cipherResult > 125:
+                cipherResult = 31 + (cipherResult - 125)
+            if cipherResult < 32:
+                cipherResult = 126 - (32 - cipherResult)
+        messageCIPHER.append(cipherResult)
+    messageCIPHERAscii = [chr(char) for char in messageCIPHER]
     # Cipher the key
     counterSkey = 0
     for i in range(0, len(keyASCII)):
@@ -84,9 +64,7 @@ def cipher(message, key, skey):
                 cipherResult = 126 - (32 - cipherResult)
         keyCIPHER.append(cipherResult)
 
-    for char in keyCIPHER:
-        keyCIPHERAscii.append(chr(char))
-
+    keyCIPHERAscii = [chr(char) for char in keyCIPHER]
     # Return a string
     messageCIPHERstr = ""
     for i in messageCIPHERAscii:
@@ -102,26 +80,14 @@ def decipher(message, key, securekey):
     message = str(message)
     key = str(key)
     securekey = str(securekey)
-    # Needed lists
-    messageCIPHERAscii = []
-    keyCIPHER = []
-    skeyASCII = []
     keyDECIPHER = []
-    keyDECIPHERChar = []
     keyDECIPHERParts = []
-    keyDECIPHERParts1 = []
-    keyDECIPHERParts2 = []
     messageDECIPHERAscii = []
     messageDECIPHERchar = []
 
-    # Convert everything in ascii
-    for char in message:
-        messageCIPHERAscii.append(ord(char))
-    for char in key:
-        keyCIPHER.append(ord(char))
-    for char in securekey:
-        skeyASCII.append(ord(char))
-
+    messageCIPHERAscii = [ord(char) for char in message]
+    keyCIPHER = [ord(char) for char in key]
+    skeyASCII = [ord(char) for char in securekey]
     # Decipher the key
     counterSkey = 0
     for i in range(0, len(keyCIPHER)):
@@ -136,23 +102,16 @@ def decipher(message, key, securekey):
                 cipherResult = 126 - (32 - cipherResult)
         keyDECIPHER.append(cipherResult)
 
-    for char in keyDECIPHER:
-        keyDECIPHERChar.append(chr(char))
-
+    keyDECIPHERChar = [chr(char) for char in keyDECIPHER]
     # Divide the key deciphered
-    n = int(len(key) / 2)
-    partnumber = 0
-    for i in range(0, len(keyDECIPHERChar), n):
-        partnumber += 1
-        if not partnumber > 2:
+    n = len(key) // 2
+    for partnumber, i in enumerate(range(0, len(keyDECIPHERChar), n), start=1):
+        if partnumber <= 2:
             keyDECIPHERParts.append(keyDECIPHERChar[i: i + n])
         else:
             keyDECIPHERParts[1] = keyDECIPHERParts[1] + keyDECIPHERChar[i: i + n]
-    # Convert it to ascii
-    for char in keyDECIPHERParts[0]:
-        keyDECIPHERParts1.append(ord(char))
-    for char in keyDECIPHERParts[1]:
-        keyDECIPHERParts2.append(ord(char))
+    keyDECIPHERParts1 = [ord(char) for char in keyDECIPHERParts[0]]
+    keyDECIPHERParts2 = [ord(char) for char in keyDECIPHERParts[1]]
     # Copy the functions to cipher but to decipher
     counterEven = 0
     counterOdd = 0
@@ -163,25 +122,18 @@ def decipher(message, key, securekey):
             if counterEven > len(keyDECIPHERParts1) - 1:
                 counterEven = 0
             cipherResult = int(messageCIPHERAscii[i]) - int(keyDECIPHERParts1[counterEven])
-            while (cipherResult > 125) or (cipherResult < 32):
-                if cipherResult > 125:
-                    cipherResult = 31 + (cipherResult - 125)
-                if cipherResult < 32:
-                    cipherResult = 126 - (32 - cipherResult)
-            messageDECIPHERAscii.append(cipherResult)
         else:
             # Use the second part of the key
             counterOdd += 1
             if counterOdd > len(keyDECIPHERParts2) - 1:
                 counterOdd = 0
             cipherResult = int(messageCIPHERAscii[i]) - int(keyDECIPHERParts2[counterOdd])
-            while (cipherResult > 125) or (cipherResult < 32):
-                if cipherResult > 125:
-                    cipherResult = 31 + (cipherResult - 125)
-                if cipherResult < 32:
-                    cipherResult = 126 - (32 - cipherResult)
-            messageDECIPHERAscii.append(cipherResult)
-
+        while (cipherResult > 125) or (cipherResult < 32):
+            if cipherResult > 125:
+                cipherResult = 31 + (cipherResult - 125)
+            if cipherResult < 32:
+                cipherResult = 126 - (32 - cipherResult)
+        messageDECIPHERAscii.append(cipherResult)
     for char in messageDECIPHERAscii:
         messageDECIPHERchar.append(chr(char))
 
